@@ -1,4 +1,4 @@
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 bpf helloworld.c -- -I.
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 bpf execve.c -- -I.
 
 package main
 
@@ -31,9 +31,10 @@ func main() {
 	defer objs.Close()
 
 	// Link program to probs or tracepoint
-	kp, err := link.Tracepoint("syscalls", "sys_enter_execve", objs.Helloworld, nil)
+	kp, err := link.Tracepoint("syscalls", "sys_enter_execve", objs.ListExecve, nil)
+	//kp, err := link.Tracepoint("syscalls", "sys_enter_execve", objs.SysEnterExecve, nil)
 	if err != nil {
-		log.Fatalf("opening kprobe: %s", err)
+		log.Fatalf("attaching tracepoint: %s", err)
 	}
 	defer kp.Close()
 
